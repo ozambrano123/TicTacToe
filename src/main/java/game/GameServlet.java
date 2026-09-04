@@ -31,31 +31,22 @@ public class GameServlet extends HttpServlet {
         game.playPlayerTurn(line, col);
         
         GamePlayer winner = game.getWinner();
+        if(winner == GamePlayer.NOBODY && game.hasEmptyCell()){
+            game.playComputerTurn();
+            winner = game.getWinner();
+        }
         switch(winner){
-            case NOBODY:
-                if(game.hasEmptyCell()){
-                    game.playComputerTurn();
-                    switch(game.getWinner()){
-                        case NOBODY:
-                            break;
-                        case COMPUTER:
-                            request.setAttribute("winner", "The computer");
-                            break;
-                        case USER:
-                            request.setAttribute("winner", "You");
-                            break;
-                    }
-                }
-                break;
             case COMPUTER:
-                request.setAttribute("winner", "The computer");
+                request.setAttribute("winner", "El computador");
                 break;
             case USER:
-                request.setAttribute("winner", "You");
+                request.setAttribute("winner", "Tú");
                 break;
-        }
-        if(winner == GamePlayer.NOBODY && !game.hasEmptyCell()){
-            request.setAttribute("winner", "Nobody");
+            case NOBODY:
+                if(!game.hasEmptyCell()){
+                    request.setAttribute("winner", "Nadie");
+                }
+                break;
         }
         request.getRequestDispatcher("/game.jsp").forward(request, response);
     }
